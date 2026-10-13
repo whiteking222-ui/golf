@@ -243,8 +243,8 @@
         <div class="val" id="sum-gir" style="color:var(--primary);">18/18 (100%)</div>
       </div>
       <div class="summary-item">
-        <div class="label">벌타(OB/해)</div>
-        <div class="val" id="sum-penalties">0 / 0</div>
+        <div class="label">벌타(총타수/OB/해)</div>
+        <div class="val" id="sum-penalties" style="color:#d32f2f;">0타 (0/0)</div>
       </div>
     </div>
 
@@ -288,11 +288,11 @@
         <div class="sub-title">벌타 (터치 +1 / 길게 누르면 0)</div>
         <div class="penalty-group">
           <div class="penalty-box ob" id="box-ob" onclick="addPenalty('ob')" oncontextmenu="resetPenalty(event, 'ob')">
-            <div class="penalty-name">OB</div>
+            <div class="penalty-name">OB (+2타)</div>
             <div class="penalty-count" id="cur-ob">0</div>
           </div>
           <div class="penalty-box haz" id="box-haz" onclick="addPenalty('haz')" oncontextmenu="resetPenalty(event, 'haz')">
-            <div class="penalty-name">해저드</div>
+            <div class="penalty-name">해저드 (+1타)</div>
             <div class="penalty-count" id="cur-haz">0</div>
           </div>
         </div>
@@ -389,7 +389,7 @@
       <div class="advanced-stat-grid">
         <div class="advanced-stat-box">
           <div class="as-label">순수 샷 타수 vs 벌타 분리</div>
-          <div class="as-formula">식: 평균 총타수 - 라운드당 평균 벌타</div>
+          <div class="as-formula">식: 평균 총타수 - 라운드당 평균 벌타(OB 2벌타 적용)</div>
           <div class="as-val info" id="stat-pure-score">- 타</div>
           <div class="as-sub-text" id="stat-pure-penalty-detail">벌타 제외 순수 플레이 타수</div>
         </div>
@@ -825,11 +825,13 @@
       renderHoleScroller();
     }
 
+    // [수정 영역 1] 실시간 요약 바에서 OB 2벌타 적용
     function updateSummary() {
       const totScore = holes.reduce((acc, cur) => acc + cur.score, 0);
       const totPutts = holes.reduce((acc, cur) => acc + cur.putts, 0);
-      const totOb = holes.reduce((acc, cur) => acc + cur.ob, 0);
-      const totHaz = holes.reduce((acc, cur) => acc + cur.haz, 0);
+      const totObCount = holes.reduce((acc, cur) => acc + cur.ob, 0);
+      const totHazCount = holes.reduce((acc, cur) => acc + cur.haz, 0);
+      const totPenaltyStrokes = (totObCount * 2) + totHazCount; // OB는 2벌타, 해저드는 1벌타
 
       const standardPar = holes.reduce((acc, cur) => acc + cur.par, 0);
       const diff = totScore - standardPar;
@@ -847,7 +849,7 @@
       document.getElementById('sum-score').textContent = `${totScore} (${status})`;
       document.getElementById('sum-putts').textContent = `${totPutts}`;
       document.getElementById('sum-gir').textContent = `${girCount}/18 (${girRate}%)`;
-      document.getElementById('sum-penalties').textContent = `${totOb} / ${totHaz}`;
+      document.getElementById('sum-penalties').textContent = `${totPenaltyStrokes}타 (${totObCount}/${totHazCount})`;
     }
 
     function updateBanner() {
@@ -937,6 +939,7 @@
       }
     }
 
+    // [수정 영역 2] 저장 시 OB 2벌타 기준 총 벌타 타수(totPenalty) 계산 저장
     function saveCurrentRound() {
       syncInputsToMeta();
       const confirmMsg = editingRoundId ? '수정된 라운딩 기록을 저장하시겠습니까?' : '현재 라운딩 기록을 저장하시겠습니까?';
@@ -955,6 +958,7 @@
         totPutts: holes.reduce((acc, cur) => acc + cur.putts, 0),
         totOb: holes.reduce((acc, cur) => acc + cur.ob, 0),
         totHaz: holes.reduce((acc, cur) => acc + cur.haz, 0),
+        totPenalty: holes.reduce((acc, cur) => acc + (cur.ob * 2) + cur.haz, 0),
         holes: JSON.parse(JSON.stringify(holes))
       };
 
@@ -998,6 +1002,7 @@
       switchTab('record');
     }
 
+    // [수정 영역 3] 기록보관함 카드에서 OB 1회당 2벌타 적용
     function loadHistory() {
       const listEl = document.getElementById('history-list');
       const history = JSON.parse(localStorage.getItem('golf_rounds') || '[]');
@@ -1061,7 +1066,8 @@
         }
 
         const girRate = Math.round((girCount / 18) * 100);
-        const totPenalty = obCount + hazCount;
+        // OB 1회당 2벌타, 해저드 1벌타 계산
+        const totPenalty = (obCount * 2) + hazCount;
         const overParNum = item.totScore - roundStandardPar;
         const overParStr = overParNum === 0 ? "(E)" : (overParNum > 0 ? `(+${overParNum})` : `(${overParNum})`);
 
@@ -1072,7 +1078,7 @@
         if (under1 > 0) girDetailHTML += `-1on: ${under1}<br>`;
         girDetailHTML += `+0on: ${on0}<br>+1on: ${over1}<br>+2on: ${over2}<br>+3on: ${over3}<br>+4on+: ${over4plus}`;
 
-        const penaltyDetailHTML = `OB: ${obCount}개<br>해저드: ${hazCount}개`;
+        const penaltyDetailHTML = `OB: ${obCount}회 (${obCount * 2}타)<br>해저드: ${hazCount}타`;
 
         card.innerHTML = `
           <div class="history-top-bar">
@@ -1124,7 +1130,7 @@
       loadHistory();
     }
 
-    // 통계 대시보드 렌더링 (통합 정밀 지표 포함)
+    // [수정 영역 4] 통계 대시보드에서 OB 2벌타 적용
     function renderStatsDashboard() {
       const history = JSON.parse(localStorage.getItem('golf_rounds') || '[]');
       if (history.length === 0) {
@@ -1167,7 +1173,6 @@
       const girRateData = [];
       const penData = [];
 
-      // 누적 정밀 지표 집계용 변수
       let grandTotalHoles = 0;
       let grandGirHoles = 0;
       let grandGirPutts = 0;
@@ -1200,13 +1205,15 @@
         totalPutts += item.totPutts;
 
         let girCount = 0;
-        let penCount = (item.totOb || 0) + (item.totHaz || 0);
+        // 기본 페널티 계산식도 OB는 2배수 적용
+        let penCount = ((item.totOb || 0) * 2) + (item.totHaz || 0);
 
         if (item.holes && Array.isArray(item.holes)) {
           penCount = 0;
           item.holes.forEach(h => {
             grandTotalHoles++;
-            const holePens = (h.ob || 0) + (h.haz || 0);
+            // OB는 2벌타, 해저드는 1벌타
+            const holePens = ((h.ob || 0) * 2) + (h.haz || 0);
             penCount += holePens;
 
             const shots = Math.max(1, h.score - h.putts);
@@ -1256,7 +1263,7 @@
               if (isGir) par4DistStats[dKey].girs++;
               par4DistStats[dKey].putts += h.putts;
               par4DistStats[dKey].totalScore += h.score;
-              par4DistStats[dKey].totalPen += holePens;
+              par4DistStats[dKey].totalPen += holePens; // 2벌타가 누적 반영된 타수
               if (holePens > 0) par4DistStats[dKey].penaltyHoles++;
             }
           });
@@ -1278,7 +1285,7 @@
       document.getElementById('avg-gir').textContent = `${Math.round(totalGirs / n)}%`;
       document.getElementById('avg-penalties').textContent = avgPenVal.toFixed(1);
 
-      // --- 1. 숏게임 & 세이브 반영 ---
+      // 1. 숏게임 & 세이브 반영
       const scrambleRate = grandNonGirHoles > 0 ? ((grandScrambleSaves / grandNonGirHoles) * 100).toFixed(1) : '0.0';
       const wedgeDiff = grandNonGirHoles > 0 ? (grandNonGirOverPar / grandNonGirHoles).toFixed(2) : '0.00';
       const wedgeSign = Number(wedgeDiff) >= 0 ? `+${wedgeDiff}` : `${wedgeDiff}`;
@@ -1287,7 +1294,7 @@
       document.getElementById('stat-scrambling-detail').textContent = `${grandScrambleSaves} / ${grandNonGirHoles} 홀 파 세이브`;
       document.getElementById('stat-wedge-efficiency').textContent = `${wedgeSign}타`;
 
-      // --- 2. 퍼팅 퀄리티 정밀 반영 ---
+      // 2. 퍼팅 퀄리티 정밀 반영
       const girPuttsAvg = grandGirHoles > 0 ? (grandGirPutts / grandGirHoles).toFixed(2) : '-';
       const threePuttRate = grandTotalHoles > 0 ? ((grandThreePlusPutts / grandTotalHoles) * 100).toFixed(1) : '0.0';
       const onePuttRate = grandTotalHoles > 0 ? ((grandOnePutts / grandTotalHoles) * 100).toFixed(1) : '0.0';
@@ -1300,7 +1307,7 @@
       document.getElementById('stat-1putt-detail').textContent = `${grandOnePutts} / ${grandTotalHoles} 홀 기록`;
       document.getElementById('stat-3putt-avoid').textContent = `${threePuttAvoid}%`;
 
-      // --- 3. 롱게임 & 위험 관리 반영 ---
+      // 3. 롱게임 & 위험 관리 반영 (OB 2벌타 기준 순수 타수 분리)
       const pureScoreVal = (avgScoreVal - avgPenVal).toFixed(1);
       const bigMissAvoidRate = grandTotalHoles > 0 ? (((grandTotalHoles - grandDoubleOrWorse) / grandTotalHoles) * 100).toFixed(1) : '0.0';
 
@@ -1309,7 +1316,7 @@
       document.getElementById('stat-bigmiss-avoid').textContent = `${bigMissAvoidRate}%`;
       document.getElementById('stat-bigmiss-detail').textContent = `더블 이상 ${grandDoubleOrWorse}홀 / 보기 이하 ${grandTotalHoles - grandDoubleOrWorse}홀`;
 
-      // Par 4 전장별 벌타 테이블
+      // Par 4 전장별 벌타 테이블 (누적 벌타 타수에 OB 2벌타 반영)
       const riskZoneTbody = document.getElementById('risk-zone-penalty-tbody');
       riskZoneTbody.innerHTML = '';
       const distKeys = ['short', 'mid', 'longMid', 'long'];
