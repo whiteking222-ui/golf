@@ -31,7 +31,7 @@
       --gir-color: #1b5e20;
       --miss-bg: #fff3e0;
       --miss-color: #e65100;
-      --confirmed-bg: #cfd8dc; /* 홀 확정 시 회색 배경 */
+      --confirmed-bg: #cfd8dc;
       --confirmed-border: #90a4ae;
       --confirmed-text: #263238;
     }
@@ -51,7 +51,7 @@
     .stats-header-filter { display: none; align-items: center; gap: 6px; }
     .stats-period-select { padding: 6px 10px; border-radius: 8px; border: 1.5px solid var(--primary); font-size: 13px; font-weight: 800; color: var(--primary); background: #fff; cursor: pointer; outline: none; }
 
-    /* 직접입력 기간 바 (통계 탭 상단) */
+    /* 직접입력 기간 바 */
     .custom-date-bar { display: none; background: #ffffff; padding: 10px 16px; border-bottom: 1px solid var(--border); align-items: center; justify-content: space-between; gap: 8px; }
     .custom-date-bar.active { display: flex; }
     .custom-date-inputs { display: flex; align-items: center; gap: 6px; flex: 1; }
@@ -73,7 +73,7 @@
     .summary-item .label { font-size: 13px; color: var(--text-sub); font-weight: 600; }
     .summary-item .val { font-size: 17px; font-weight: 800; margin-top: 3px; }
 
-    /* 홀 스크롤러 & 홀 버튼 스타일 */
+    /* 홀 스크롤러 & 홀 버튼 */
     .hole-scroller { display: flex; overflow-x: auto; background: #fff; padding: 10px 14px; gap: 8px; border-bottom: 1.5px solid var(--border); scrollbar-width: none; }
     .hole-scroller::-webkit-scrollbar { display: none; }
     .hole-btn { 
@@ -94,21 +94,17 @@
       -webkit-touch-callout: none;
     }
     .hole-btn:active { transform: scale(0.95); }
-    
-    /* [추가] 확정된 홀 (회색) */
     .hole-btn.confirmed {
       background: var(--confirmed-bg);
       border-color: var(--confirmed-border);
       color: var(--confirmed-text);
     }
-    /* 현재 선택된 홀 */
     .hole-btn.active {
       background: var(--primary);
       color: #fff;
       border-color: var(--primary);
       box-shadow: 0 2px 5px rgba(46,125,50,0.3);
     }
-    /* 현재 선택된 홀이면서 확정된 경우: 녹색 바탕에 회색 테두리 포인트 */
     .hole-btn.active.confirmed {
       background: var(--primary);
       border: 2.5px solid #37474f;
@@ -132,8 +128,6 @@
     .hole-info-badges { display: flex; gap: 8px; align-items: center; }
     .par-badge { background: var(--primary-light); color: var(--primary); padding: 6px 14px; border-radius: 20px; font-size: 16px; font-weight: 800; cursor: pointer; border: none; }
     .dist-badge { background: #f0f0f0; color: #333; padding: 6px 14px; border-radius: 20px; font-size: 15px; font-weight: 700; }
-
-    /* 롱프레스 안내 팁 텍스트 */
     .hole-tip { font-size: 12px; color: #78909c; margin-top: 4px; text-align: center; }
 
     /* 온그린 상태 알림 */
@@ -143,7 +137,7 @@
     .on-status-box .status-tag { font-weight: 900; font-size: 16px; }
     .on-status-box .status-desc { font-size: 13px; font-weight: 600; opacity: 0.95; }
 
-    /* 타수 조절 컨트롤 */
+    /* 타수 컨트롤 */
     .score-control { text-align: center; margin: 16px 0 10px; }
     .stepper { display: flex; justify-content: center; align-items: center; gap: 30px; margin: 10px 0; }
     .step-btn { width: 52px; height: 52px; border-radius: 50%; border: 1.5px solid var(--border); background: #fff; font-size: 26px; font-weight: 900; cursor: pointer; display: flex; align-items: center; justify-content: center; }
@@ -177,7 +171,7 @@
     .course-table th { background: #fafafa; font-weight: 700; color: var(--text-sub); }
     .course-input { width: 92%; padding: 8px 4px; border: 1.5px solid var(--border); border-radius: 6px; text-align: center; font-size: 16px; font-weight: 600; }
 
-    /* 정밀 통계 전용 스타일 */
+    /* 정밀 통계 스타일 */
     .stat-section-card { background: #fff; margin: 14px 16px; padding: 16px 14px; border-radius: 16px; border: 1.5px solid var(--border); box-shadow: 0 2px 6px rgba(0,0,0,0.04); }
     .stat-section-title { font-size: 16px; font-weight: 900; color: var(--primary); margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; }
     .advanced-stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
@@ -204,7 +198,7 @@
     .btn-block { width: 100%; padding: 14px; border-radius: 12px; background: var(--primary); color: #fff; border: none; font-size: 17px; font-weight: 800; cursor: pointer; margin-top: 10px; }
     .btn-secondary { background: #f0f0f0; color: #333; margin-top: 8px; }
 
-    /* 코스 프리셋 리스트 카드 */
+    /* 코스 프리셋 리스트 */
     .template-card { background: #fff; margin: 12px 16px; padding: 16px; border-radius: 14px; border: 1.5px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
     .template-info h4 { font-size: 17px; font-weight: 800; margin-bottom: 3px; }
     .template-info p { font-size: 14px; color: var(--text-sub); }
@@ -242,18 +236,20 @@
     .h-col-sub { font-size: 14px; font-weight: 700; color: #333333; line-height: 1.5; border-top: 1.5px dashed #d5d5d5; padding-top: 6px; word-break: keep-all; }
     .memo-preview { font-size: 15px; color: #333; background: #f9f9f9; border-left: 4px solid var(--primary); padding: 10px 14px; border-radius: 0 8px 8px 0; margin-top: 12px; line-height: 1.5; font-weight: 600; }
 
-    /* 통계 탭 상단 카드 */
+    /* 통계 탭 스타일 */
     .stat-summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 14px 16px; }
     .stat-card { background: #fff; padding: 12px 6px; border-radius: 12px; border: 1.5px solid var(--border); text-align: center; }
     .stat-card .lbl { font-size: 12px; font-weight: 700; color: var(--text-sub); }
     .stat-card .val { font-size: 19px; font-weight: 900; margin-top: 4px; }
+    
     .chart-container { background: #fff; margin: 14px 16px; padding: 16px 14px 12px; border-radius: 16px; border: 1.5px solid var(--border); box-shadow: 0 2px 6px rgba(0,0,0,0.04); }
     .chart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
     .chart-title { font-size: 16px; font-weight: 900; }
-    .chart-legend { display: flex; gap: 10px; font-size: 12px; font-weight: 700; }
+    .chart-legend { display: flex; gap: 10px; font-size: 12px; font-weight: 700; flex-wrap: wrap; }
     .legend-item { display: flex; align-items: center; gap: 4px; }
     .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
-    .chart-canvas { width: 100%; height: 200px; display: block; }
+    .chart-canvas { width: 100%; height: 210px; display: block; }
+    .boxplot-canvas { width: 100%; height: 250px; display: block; }
 
     /* 하단 네비게이션 */
     nav { position: fixed; bottom: 0; left: 0; width: 100%; height: 64px; background: #fff; border-top: 1.5px solid var(--border); display: flex; z-index: 10; }
@@ -410,6 +406,40 @@
         <div class="lbl">평균 벌타</div>
         <div class="val" id="avg-penalties" style="color:#d32f2f;">-</div>
       </div>
+    </div>
+
+    <!-- [신규 보강] 1. 각 홀별(1~18H) 오버파 박스플롯 그래프 -->
+    <div class="chart-container">
+      <div class="chart-header">
+        <div>
+          <div class="chart-title">📦 1~18홀별 오버파 분포 (Box Plot)</div>
+          <div style="font-size: 11px; color:#607d8b; margin-top:3px;">
+            상자(25%~75%), 선(중앙값), 수염(최소~최대) | 1~9홀(전반) vs 10~18홀(후반) 흐름 비교
+          </div>
+        </div>
+        <div class="chart-legend">
+          <div class="legend-item"><span class="legend-dot" style="background:#2e7d32;"></span>오버파 분포</div>
+          <div class="legend-item"><span class="legend-dot" style="background:#f57c00;"></span>중앙값(-)</div>
+        </div>
+      </div>
+      <canvas id="chart-boxplot-score" class="boxplot-canvas"></canvas>
+    </div>
+
+    <!-- [신규 보강] 2. 각 홀별(1~18H) 벌타수 박스플롯 그래프 -->
+    <div class="chart-container">
+      <div class="chart-header">
+        <div>
+          <div class="chart-title">🚨 1~18홀별 벌타 분포 (Box Plot)</div>
+          <div style="font-size: 11px; color:#607d8b; margin-top:3px;">
+            OB(2벌타)+해저드(1벌타) 합산 | 후반 집중 미스 및 벌타 다발 홀 추적
+          </div>
+        </div>
+        <div class="chart-legend">
+          <div class="legend-item"><span class="legend-dot" style="background:#d32f2f;"></span>벌타 분포</div>
+          <div class="legend-item"><span class="legend-dot" style="background:#d32f2f; height:2px; width:12px; border-radius:0;"></span>중앙값</div>
+        </div>
+      </div>
+      <canvas id="chart-boxplot-penalty" class="boxplot-canvas"></canvas>
     </div>
 
     <!-- 숏게임 & 그린 주변 세이브 능력 -->
@@ -705,7 +735,6 @@
     const defaultPars = [4,4,3,5,4,4,3,4,5, 4,5,3,4,4,3,4,5,4];
     const defaultDists = [360, 340, 150, 480, 370, 350, 160, 380, 500, 370, 490, 155, 360, 350, 165, 380, 510, 365];
 
-    // isConfirmed: 1초 이상 롱프레스 시 확정 여부 (기본 false)
     let holes = Array.from({ length: 18 }, (_, i) => ({
       num: i + 1,
       par: defaultPars[i],
@@ -757,7 +786,6 @@
       document.getElementById('stats-end-date').value = today;
     }
 
-    // [요청 반영]: 초기화 시 데이터뿐만 아니라 홀 색깔(확정 상태) 및 dot까지 완전 초기화
     function resetRoundScores(askConfirm = false) {
       if (askConfirm) {
         if (!confirm("모든 홀 스코어와 확정 상태(색상 및 dot)를 초기화할까요?")) {
@@ -769,13 +797,13 @@
         h.putts = 2;
         h.ob = 0;
         h.haz = 0;
-        h.isConfirmed = false; // 확정 상태 초기화
+        h.isConfirmed = false;
       });
       curIdx = 0;
       renderCurrentHole();
       updateSummary();
       renderHoleScroller();
-      saveCurrentRoundQuietly(); // 임시 저장 상태도 리셋 반영
+      saveCurrentRoundQuietly();
     }
 
     function syncMetaToInputs() {
@@ -790,7 +818,6 @@
       document.getElementById('info-memo').value = roundMeta.memo || '';
     }
 
-    // [요청 반영]: 1초 롱프레스 시 홀 확정/해제 & 회색 변경 & dot 제어
     function renderHoleScroller() {
       const scroller = document.getElementById('hole-scroller');
       scroller.innerHTML = '';
@@ -803,7 +830,6 @@
         if (h.isConfirmed) classNames.push('confirmed');
         btn.className = classNames.join(' ');
 
-        // 확정(isConfirmed === true)된 홀에만 GIR과 벌타 dot 표시
         let dotsHtml = '';
         if (h.isConfirmed) {
           const shotsToGreen = h.score - h.putts;
@@ -819,7 +845,6 @@
 
         btn.innerHTML = `${h.num}${dotsHtml}`;
 
-        // 롱프레스(1초) 타이머 제어 변수
         let pressTimer = null;
         let isLongPressed = false;
 
@@ -828,7 +853,7 @@
           pressTimer = setTimeout(() => {
             isLongPressed = true;
             toggleHoleConfirmation(idx);
-          }, 1000); // 1초 유지 시 확정 동작
+          }, 1000);
         };
 
         const cancelPress = () => {
@@ -838,7 +863,6 @@
           }
         };
 
-        // 모바일 터치 이벤트
         btn.addEventListener('touchstart', (e) => {
           startPress(e);
         }, { passive: true });
@@ -852,7 +876,6 @@
 
         btn.addEventListener('touchmove', cancelPress);
 
-        // 데스크톱 마우스 이벤트 호환
         btn.addEventListener('mousedown', startPress);
         btn.addEventListener('mouseup', () => {
           cancelPress();
@@ -861,28 +884,23 @@
           }
         });
         btn.addEventListener('mouseleave', cancelPress);
-        btn.addEventListener('contextmenu', (e) => e.preventDefault()); // 롱터치 컨텍스트 메뉴 차단
+        btn.addEventListener('contextmenu', (e) => e.preventDefault());
 
         scroller.appendChild(btn);
       });
     }
 
-    // 홀 확정 토글 및 결과 자동 업데이트 저장
     function toggleHoleConfirmation(idx) {
       holes[idx].isConfirmed = !holes[idx].isConfirmed;
 
-      // 진동 피드백 (모바일 기기 지원 시)
       if (navigator.vibrate) {
         navigator.vibrate(60);
       }
 
-      // 홀 선택 이동
       curIdx = idx;
       renderHoleScroller();
       renderCurrentHole();
       updateSummary();
-
-      // [요청 반영]: 결과를 업데이트해서 저장
       saveCurrentRoundQuietly();
     }
 
@@ -902,7 +920,6 @@
       document.getElementById('cur-ob').textContent = h.ob;
       document.getElementById('cur-haz').textContent = h.haz;
 
-      // 확정 뱃지 표시
       const badge = document.getElementById('cur-hole-confirm-badge');
       if (h.isConfirmed) {
         badge.classList.add('show');
@@ -1145,7 +1162,6 @@
       }
     }
 
-    // 홀 확정 시 백그라운드 조용히 저장
     function saveCurrentRoundQuietly() {
       syncInputsToMeta();
       const recordId = editingRoundId ? editingRoundId : (window._currentActiveRoundId || Date.now());
@@ -1177,7 +1193,6 @@
       localStorage.setItem('golf_rounds', JSON.stringify(history));
     }
 
-    // [요청 반영]: 저장 후 화면(창)이 닫히거나 다른 탭으로 넘어가지 않고 현재 입력창 유지
     function saveCurrentRound() {
       syncInputsToMeta();
       const confirmMsg = editingRoundId ? '수정된 라운딩 기록을 저장하시겠습니까?' : '현재 라운딩 기록을 저장하시겠습니까?';
@@ -1212,7 +1227,6 @@
       localStorage.setItem('golf_rounds', JSON.stringify(history));
 
       alert('라운딩 기록이 안전하게 저장되었습니다!');
-      // switchTab('history'); 호출을 제거하여 현재 입력 화면을 그대로 유지
     }
 
     function editHistoryRecord(id) {
@@ -1369,6 +1383,204 @@
       loadHistory();
     }
 
+    // ==========================================
+    // 5수치 요약값(Quartiles) 산출 함수
+    // ==========================================
+    function calculateBoxPlotStats(arr) {
+      if (!arr || arr.length === 0) return null;
+      const s = [...arr].sort((a, b) => a - b);
+      const n = s.length;
+
+      const getPercentile = (p) => {
+        const idx = (n - 1) * p;
+        const low = Math.floor(idx);
+        const high = Math.ceil(idx);
+        if (low === high) return s[low];
+        return s[low] + (s[high] - s[low]) * (idx - low);
+      };
+
+      const min = s[0];
+      const max = s[n - 1];
+      const q1 = getPercentile(0.25);
+      const median = getPercentile(0.5);
+      const q3 = getPercentile(0.75);
+
+      return { min, q1, median, q3, max, count: n };
+    }
+
+    // ==========================================
+    // 1~18번 홀 박스플롯 렌더링 함수
+    // ==========================================
+    function drawBoxPlotChart(canvasId, boxStatsArray, options = {}) {
+      const cvs = document.getElementById(canvasId);
+      if (!cvs) return;
+      const dpr = window.devicePixelRatio || 1;
+      const rect = cvs.getBoundingClientRect();
+      cvs.width = rect.width * dpr;
+      cvs.height = rect.height * dpr;
+
+      const ctx = cvs.getContext('2d');
+      ctx.scale(dpr, dpr);
+
+      const W = rect.width;
+      const H = rect.height;
+      const padL = 36;
+      const padR = 16;
+      const padT = 24;
+      const padB = 34;
+
+      ctx.clearRect(0, 0, W, H);
+
+      let allMin = Infinity;
+      let allMax = -Infinity;
+      let validBoxes = 0;
+
+      boxStatsArray.forEach(b => {
+        if (b) {
+          validBoxes++;
+          if (b.min < allMin) allMin = b.min;
+          if (b.max > allMax) allMax = b.max;
+        }
+      });
+
+      if (validBoxes === 0) {
+        clearCanvas(canvasId, '표시할 홀별 통계 데이터가 없습니다.');
+        return;
+      }
+
+      // 기본 스케일 범위 보정
+      let yMin = options.min !== undefined ? options.min : Math.floor(allMin);
+      let yMax = options.max !== undefined ? options.max : Math.ceil(allMax);
+
+      if (yMin === yMax) {
+        yMin -= 1;
+        yMax += 2;
+      }
+      if (yMax - yMin < 3) {
+        yMax = yMin + 3;
+      }
+
+      const plotW = W - padL - padR;
+      const plotH = H - padT - padB;
+
+      const getY = (val) => padT + plotH - ((val - yMin) / (yMax - yMin)) * plotH;
+
+      // 1. 배경 그리드 및 Y축 라벨
+      ctx.strokeStyle = '#f0f0f0';
+      ctx.lineWidth = 1;
+      ctx.fillStyle = '#888888';
+      ctx.font = '11px sans-serif';
+      ctx.textAlign = 'right';
+
+      const gridRange = yMax - yMin;
+      const step = gridRange > 8 ? 2 : 1;
+
+      for (let v = yMin; v <= yMax; v += step) {
+        const y = getY(v);
+        ctx.beginPath();
+        ctx.moveTo(padL, y);
+        ctx.lineTo(W - padR, y);
+        ctx.stroke();
+
+        // 0(이븐파) 라인은 뚜렷하게
+        if (v === 0) {
+          ctx.save();
+          ctx.strokeStyle = '#b0bec5';
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.moveTo(padL, y);
+          ctx.lineTo(W - padR, y);
+          ctx.stroke();
+          ctx.restore();
+        }
+
+        const labelText = v > 0 ? `+${v}` : `${v}`;
+        ctx.fillText(labelText, padL - 6, y + 4);
+      }
+
+      // 2. 전반(1~9) / 후반(10~18) 구분 배경 및 텍스트
+      const colW = plotW / 18;
+      const halfX = padL + colW * 9;
+
+      ctx.save();
+      ctx.strokeStyle = '#90caf9';
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath();
+      ctx.moveTo(halfX, padT);
+      ctx.lineTo(halfX, H - padB);
+      ctx.stroke();
+      ctx.restore();
+
+      ctx.font = 'bold 11px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillStyle = '#78909c';
+      ctx.fillText('◀ 전반 (1~9H)', padL + colW * 4.5, padT - 8);
+      ctx.fillText('후반 (10~18H) ▶', halfX + colW * 4.5, padT - 8);
+
+      // 3. 1~18번 홀 박스플롯 그리기
+      const boxW = Math.max(8, colW * 0.58);
+      const strokeColor = options.strokeColor || '#2e7d32';
+      const boxColor = options.boxColor || 'rgba(46, 125, 50, 0.18)';
+      const medianColor = options.medianColor || '#f57c00';
+
+      boxStatsArray.forEach((b, i) => {
+        const centerX = padL + colW * i + colW / 2;
+        const holeNum = i + 1;
+
+        // X축 홀 번호 (전/후반 색상 차별화)
+        ctx.font = (holeNum === 9 || holeNum === 18) ? 'bold 11px sans-serif' : '11px sans-serif';
+        ctx.fillStyle = holeNum > 9 ? '#1565c0' : '#2e7d32';
+        ctx.fillText(`${holeNum}`, centerX, H - 12);
+
+        if (!b) return;
+
+        const yMinPx = getY(b.min);
+        const yQ1Px = getY(b.q1);
+        const yMedPx = getY(b.median);
+        const yQ3Px = getY(b.q3);
+        const yMaxPx = getY(b.max);
+
+        // A. 수염선 (Whisker)
+        ctx.strokeStyle = strokeColor;
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(centerX, yMinPx);
+        ctx.lineTo(centerX, yQ1Px);
+        ctx.moveTo(centerX, yQ3Px);
+        ctx.lineTo(centerX, yMaxPx);
+        ctx.stroke();
+
+        // 수염 끝 캡 (T-cap)
+        const capW = boxW * 0.45;
+        ctx.beginPath();
+        ctx.moveTo(centerX - capW, yMinPx);
+        ctx.lineTo(centerX + capW, yMinPx);
+        ctx.moveTo(centerX - capW, yMaxPx);
+        ctx.lineTo(centerX + capW, yMaxPx);
+        ctx.stroke();
+
+        // B. 상자 (IQR: Q1 ~ Q3)
+        const boxTop = Math.min(yQ1Px, yQ3Px);
+        const boxH = Math.max(2, Math.abs(yQ3Px - yQ1Px));
+
+        ctx.fillStyle = boxColor;
+        ctx.fillRect(centerX - boxW / 2, boxTop, boxW, boxH);
+        ctx.strokeStyle = strokeColor;
+        ctx.lineWidth = 1.5;
+        ctx.strokeRect(centerX - boxW / 2, boxTop, boxW, boxH);
+
+        // C. 중앙값 (Median) 라인
+        ctx.strokeStyle = medianColor;
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.moveTo(centerX - boxW / 2, yMedPx);
+        ctx.lineTo(centerX + boxW / 2, yMedPx);
+        ctx.stroke();
+      });
+    }
+
+    // 통계 대시보드 렌더링
     function renderStatsDashboard() {
       const history = JSON.parse(localStorage.getItem('golf_rounds') || '[]');
 
@@ -1414,6 +1626,9 @@
         document.getElementById('risk-zone-penalty-tbody').innerHTML = '<tr><td colspan="5" style="padding:20px; color:#888;">해당 기간의 기록이 없습니다.</td></tr>';
         document.getElementById('par-analysis-tbody').innerHTML = '<tr><td colspan="6" style="padding:20px; color:#888;">해당 기간의 기록이 없습니다.</td></tr>';
         document.getElementById('par4-dist-tbody').innerHTML = '<tr><td colspan="6" style="padding:20px; color:#888;">해당 기간의 기록이 없습니다.</td></tr>';
+        
+        clearCanvas('chart-boxplot-score', '해당 기간의 라운딩 기록이 없습니다.');
+        clearCanvas('chart-boxplot-penalty', '해당 기간의 라운딩 기록이 없습니다.');
         clearCanvas('chart-score', '해당 기간의 라운딩 기록이 없습니다.');
         clearCanvas('chart-gir-pen', '해당 기간의 라운딩 기록이 없습니다.');
         return;
@@ -1442,6 +1657,10 @@
       let grandThreePlusPutts = 0;
       let grandDoubleOrWorse = 0;
 
+      // 1~18번 홀별 데이터 배열 초기화
+      const holeOverPars = Array.from({ length: 18 }, () => []);
+      const holePenalties = Array.from({ length: 18 }, () => []);
+
       const parStats = {
         3: { count: 0, pars: 0, saves: 0, girs: 0, putts: 0, scoreDiff: 0, totalScore: 0 },
         4: { count: 0, pars: 0, saves: 0, girs: 0, putts: 0, scoreDiff: 0, totalScore: 0 },
@@ -1467,10 +1686,17 @@
 
         if (item.holes && Array.isArray(item.holes)) {
           penCount = 0;
-          item.holes.forEach(h => {
+          item.holes.forEach((h, hIdx) => {
             grandTotalHoles++;
             const holePens = ((h.ob || 0) * 2) + (h.haz || 0);
             penCount += holePens;
+
+            // 1~18홀별 오버파 및 벌타 배열 누적
+            if (hIdx >= 0 && hIdx < 18) {
+              const overPar = h.score - h.par;
+              holeOverPars[hIdx].push(overPar);
+              holePenalties[hIdx].push(holePens);
+            }
 
             const shots = Math.max(1, h.score - h.putts);
             const girStd = h.par - 2;
@@ -1537,6 +1763,7 @@
       document.getElementById('avg-gir').textContent = `${Math.round(totalGirs / n)}%`;
       document.getElementById('avg-penalties').textContent = avgPenVal.toFixed(1);
 
+      // 1. 숏게임 & 세이브 반영
       const scrambleRate = grandNonGirHoles > 0 ? ((grandScrambleSaves / grandNonGirHoles) * 100).toFixed(1) : '0.0';
       const wedgeDiff = grandNonGirHoles > 0 ? (grandNonGirOverPar / grandNonGirHoles).toFixed(2) : '0.00';
       const wedgeSign = Number(wedgeDiff) >= 0 ? `+${wedgeDiff}` : `${wedgeDiff}`;
@@ -1545,6 +1772,7 @@
       document.getElementById('stat-scrambling-detail').textContent = `${grandScrambleSaves} / ${grandNonGirHoles} 홀 파 세이브`;
       document.getElementById('stat-wedge-efficiency').textContent = `${wedgeSign}타`;
 
+      // 2. 퍼팅 퀄리티 정밀 반영
       const girPuttsAvg = grandGirHoles > 0 ? (grandGirPutts / grandGirHoles).toFixed(2) : '-';
       const threePuttRate = grandTotalHoles > 0 ? ((grandThreePlusPutts / grandTotalHoles) * 100).toFixed(1) : '0.0';
       const onePuttRate = grandTotalHoles > 0 ? ((grandOnePutts / grandTotalHoles) * 100).toFixed(1) : '0.0';
@@ -1557,6 +1785,7 @@
       document.getElementById('stat-1putt-detail').textContent = `${grandOnePutts} / ${grandTotalHoles} 홀 기록`;
       document.getElementById('stat-3putt-avoid').textContent = `${threePuttAvoid}%`;
 
+      // 3. 롱게임 & 위험 관리 반영
       const pureScoreVal = (avgScoreVal - avgPenVal).toFixed(1);
       const bigMissAvoidRate = grandTotalHoles > 0 ? (((grandTotalHoles - grandDoubleOrWorse) / grandTotalHoles) * 100).toFixed(1) : '0.0';
 
@@ -1565,6 +1794,26 @@
       document.getElementById('stat-bigmiss-avoid').textContent = `${bigMissAvoidRate}%`;
       document.getElementById('stat-bigmiss-detail').textContent = `더블 이상 ${grandDoubleOrWorse}홀 / 보기 이하 ${grandTotalHoles - grandDoubleOrWorse}홀`;
 
+      // ==========================================
+      // [신규 박스플롯 렌더링]: 1~18홀별 오버파 & 벌타
+      // ==========================================
+      const scoreBoxStats = holeOverPars.map(arr => calculateBoxPlotStats(arr));
+      const penaltyBoxStats = holePenalties.map(arr => calculateBoxPlotStats(arr));
+
+      drawBoxPlotChart('chart-boxplot-score', scoreBoxStats, {
+        strokeColor: '#2e7d32',
+        boxColor: 'rgba(76, 175, 80, 0.22)',
+        medianColor: '#f57c00'
+      });
+
+      drawBoxPlotChart('chart-boxplot-penalty', penaltyBoxStats, {
+        min: 0,
+        strokeColor: '#d32f2f',
+        boxColor: 'rgba(239, 83, 80, 0.22)',
+        medianColor: '#b71c1c'
+      });
+
+      // Par 4 전장별 벌타 테이블
       const riskZoneTbody = document.getElementById('risk-zone-penalty-tbody');
       riskZoneTbody.innerHTML = '';
       const distKeys = ['short', 'mid', 'longMid', 'long'];
@@ -1588,6 +1837,7 @@
         riskZoneTbody.appendChild(tr);
       });
 
+      // Par별 상세 분석 테이블
       const parTbody = document.getElementById('par-analysis-tbody');
       parTbody.innerHTML = '';
       const parRows = [
@@ -1622,6 +1872,7 @@
         }
       });
 
+      // Par 4 거리별 상세 테이블
       const par4Tbody = document.getElementById('par4-dist-tbody');
       par4Tbody.innerHTML = '';
       distKeys.forEach(k => {
@@ -1650,6 +1901,7 @@
         par4Tbody.appendChild(tr);
       });
 
+      // 기존 꺾은선 차트 렌더링
       drawLineChart('chart-score', labels, [
         { name: '타수', data: scoreData, color: '#2e7d32' },
         { name: '퍼트', data: puttData, color: '#1976d2' }
