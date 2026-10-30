@@ -566,35 +566,35 @@
       <canvas id="chart-gir-pen" class="chart-canvas"></canvas>
     </div>
 
-    <!-- [최하단] 8. 각 홀별(1~18H) 기준타수 대비 오버파/언더파 박스플롯 (실수·소수점 1자리) -->
+    <!-- [요청 반영 최하단] 8. 각 홀별(1~18H) 기준타수 대비 오버파/언더파 박스플롯 (평균값 수치 표기) -->
     <div class="chart-container">
       <div class="chart-header">
         <div>
           <div class="chart-title">📦 1~18홀별 기준타수 대비 오버파(언더파) 분포 (Box Plot)</div>
           <div style="font-size: 11px; color:#607d8b; margin-top:3px;">
-            중앙값(실수값 표기), 상자(25%~75%), 수염(최소~최대) | 1~9H(전반) vs 10~18H(후반) 흐름 비교
+            평균값(수치 라벨 표기), 상자(25%~75%), 수염(최소~최대) | 1~9H(전반) vs 10~18H(후반) 흐름 비교
           </div>
         </div>
         <div class="chart-legend">
           <div class="legend-item"><span class="legend-dot" style="background:#2e7d32;"></span>오버파 분포</div>
-          <div class="legend-item"><span class="legend-dot" style="background:#f57c00;"></span>중앙값(-)</div>
+          <div class="legend-item"><span class="legend-dot" style="background:#e65100; height:2px; width:12px; border-radius:0;"></span>평균값(---)</div>
         </div>
       </div>
       <canvas id="chart-boxplot-score" class="boxplot-canvas"></canvas>
     </div>
 
-    <!-- [최하단] 9. 각 홀별(1~18H) 벌타수 박스플롯 (실수·소수점 1자리) -->
+    <!-- [요청 반영 최하단] 9. 각 홀별(1~18H) 벌타수 박스플롯 (평균값 수치 표기) -->
     <div class="chart-container">
       <div class="chart-header">
         <div>
           <div class="chart-title">🚨 1~18홀별 벌타 분포 (Box Plot)</div>
           <div style="font-size: 11px; color:#607d8b; margin-top:3px;">
-            OB(2벌타)+해저드(1벌타) 합산 | 후반 집중 미스 및 벌타 다발 홀 추적
+            OB(2벌타)+해저드(1벌타) 합산 | 평균값(수치 표기)으로 홀별 벌타 위험도 추적
           </div>
         </div>
         <div class="chart-legend">
           <div class="legend-item"><span class="legend-dot" style="background:#d32f2f;"></span>벌타 분포</div>
-          <div class="legend-item"><span class="legend-dot" style="background:#b71c1c; height:2px; width:12px; border-radius:0;"></span>중앙값</div>
+          <div class="legend-item"><span class="legend-dot" style="background:#b71c1c; height:2px; width:12px; border-radius:0;"></span>평균값(---)</div>
         </div>
       </div>
       <canvas id="chart-boxplot-penalty" class="boxplot-canvas"></canvas>
@@ -1383,7 +1383,7 @@
     }
 
     // ==========================================
-    // 5수치 요약값(Quartiles) 산출 함수
+    // 5수치 요약값 + 평균값(Mean) 산출 함수
     // ==========================================
     function calculateBoxPlotStats(arr) {
       if (!arr || arr.length === 0) return null;
@@ -1402,14 +1402,17 @@
       const min = s[0];
       const max = s[n - 1];
       const q1 = getPercentile(0.25);
-      const median = getPercentile(0.5);
       const q3 = getPercentile(0.75);
 
-      return { min, q1, median, q3, max, count: n };
+      // 산술평균 계산
+      const sum = arr.reduce((acc, cur) => acc + cur, 0);
+      const mean = sum / n;
+
+      return { min, q1, q3, max, mean, count: n };
     }
 
     // ==========================================
-    // 박스플롯 렌더링 (소수점 1자리 실수 라벨 & 기준타수 대비 정밀 스케일)
+    // 박스플롯 렌더링 (중앙값 제외, 평균값 점선 및 수치 표기)
     // ==========================================
     function drawBoxPlotChart(canvasId, boxStatsArray, options = {}) {
       const cvs = document.getElementById(canvasId);
@@ -1426,7 +1429,7 @@
       const H = rect.height;
       const padL = 40;
       const padR = 14;
-      const padT = 34; // 상단 수치 라벨 공간
+      const padT = 34;
       const padB = 34;
 
       ctx.clearRect(0, 0, W, H);
@@ -1440,6 +1443,8 @@
           validBoxes++;
           if (b.min < allMin) allMin = b.min;
           if (b.max > allMax) allMax = b.max;
+          if (b.mean < allMin) allMin = b.mean;
+          if (b.mean > allMax) allMax = b.mean;
         }
       });
 
@@ -1459,7 +1464,6 @@
         yMax = yMin + 2.5;
       }
 
-      // 위아래 여백을 위해 0.5타 단위 확장
       yMin = Math.floor(yMin - 0.5);
       yMax = Math.ceil(yMax + 0.5);
 
@@ -1521,11 +1525,11 @@
       ctx.fillText('◀ 전반 (1~9H)', padL + colW * 4.5, padT - 16);
       ctx.fillText('후반 (10~18H) ▶', halfX + colW * 4.5, padT - 16);
 
-      // 3. 1~18번 홀 박스플롯 및 수치 라벨
+      // 3. 1~18번 홀 박스플롯 및 평균값(Mean) 표기
       const boxW = Math.max(7, colW * 0.56);
       const strokeColor = options.strokeColor || '#2e7d32';
       const boxColor = options.boxColor || 'rgba(76, 175, 80, 0.22)';
-      const medianColor = options.medianColor || '#f57c00';
+      const meanColor = options.meanColor || '#e65100';
 
       boxStatsArray.forEach((b, i) => {
         const centerX = padL + colW * i + colW / 2;
@@ -1540,7 +1544,7 @@
 
         const yMinPx = getY(b.min);
         const yQ1Px = getY(b.q1);
-        const yMedPx = getY(b.median);
+        const yMeanPx = getY(b.mean);
         const yQ3Px = getY(b.q3);
         const yMaxPx = getY(b.max);
 
@@ -1573,28 +1577,32 @@
         ctx.lineWidth = 1.5;
         ctx.strokeRect(centerX - boxW / 2, boxTop, boxW, boxH);
 
-        // C. 중앙값 (Median) 라인
-        ctx.strokeStyle = medianColor;
+        // C. [요청 반영] 중앙값 제거 후 '평균값(Mean)' 선을 점선(대시)으로 뚜렷하게 표시
+        ctx.save();
+        ctx.strokeStyle = meanColor;
         ctx.lineWidth = 2.5;
+        ctx.setLineDash([3, 2]); // 대시 라인
         ctx.beginPath();
-        ctx.moveTo(centerX - boxW / 2, yMedPx);
-        ctx.lineTo(centerX + boxW / 2, yMedPx);
+        ctx.moveTo(centerX - boxW / 2, yMeanPx);
+        ctx.lineTo(centerX + boxW / 2, yMeanPx);
         ctx.stroke();
+        ctx.restore();
 
-        // D. 중앙값(실수) 소수점 1자리 수치 라벨
+        // D. [요청 반영] 평균값 숫자를 소수점 첫째 자리로 표시
         ctx.save();
         ctx.font = 'bold 9.5px sans-serif';
-        ctx.fillStyle = medianColor;
+        ctx.fillStyle = meanColor;
         ctx.textAlign = 'center';
 
-        const medStr = b.median > 0 ? `+${b.median.toFixed(1)}` : `${b.median.toFixed(1)}`;
-        const textY = Math.min(boxTop, yMedPx) - 4;
-        ctx.fillText(medStr, centerX, textY);
+        const meanStr = b.mean > 0 ? `+${b.mean.toFixed(1)}` : `${b.mean.toFixed(1)}`;
+        // 상자 위 또는 평균값 라인 위쪽 위치
+        const textY = Math.min(boxTop, yMeanPx) - 4;
+        ctx.fillText(meanStr, centerX, textY);
         ctx.restore();
       });
     }
 
-    // 통계 대시보드 렌더링 (저장된 라운딩 기록 완벽 매핑 및 박스플롯 집계)
+    // 통계 대시보드 렌더링
     function renderStatsDashboard() {
       const history = JSON.parse(localStorage.getItem('golf_rounds') || '[]');
 
@@ -1672,7 +1680,7 @@
       let grandThreePlusPutts = 0;
       let grandDoubleOrWorse = 0;
 
-      // 1~18번 홀별 데이터 수집 배열 (홀 인덱스 0 = 1번 홀)
+      // 1~18번 홀별 데이터 수집 배열
       const holeOverPars = Array.from({ length: 18 }, () => []);
       const holePenalties = Array.from({ length: 18 }, () => []);
 
@@ -1689,7 +1697,6 @@
         long: { label: '장거리 (≥390m)', count: 0, saves: 0, girs: 0, putts: 0, totalScore: 0, penaltyHoles: 0, totalPen: 0 }
       };
 
-      // [핵심 보정]: 각 라운드별로 실제 1~18번 홀의 기준 타수(Par) 대비 오버/언더파 및 벌타를 홀 번호(`h.num`) 기준으로 정확히 집계
       sorted.forEach((item) => {
         labels.push(item.date.slice(5));
         scoreData.push(item.totScore);
@@ -1704,16 +1711,13 @@
           item.holes.forEach((h, idx) => {
             grandTotalHoles++;
 
-            // 홀 번호가 명시되어 있으면 h.num, 없으면 배열 순서 사용
             const holeNumber = (h.num && h.num >= 1 && h.num <= 18) ? h.num : (idx + 1);
             const holeArrIdx = holeNumber - 1;
 
-            // 기준타수 대비 오버파(언더파) 계산 (Par가 없으면 4 기준)
             const holePar = h.par || 4;
             const holeScore = h.score !== undefined ? h.score : holePar;
             const overPar = holeScore - holePar;
 
-            // 벌타 (OB 2벌타, 해저드 1벌타)
             const holePens = ((h.ob || 0) * 2) + (h.haz || 0);
             roundPenCount += holePens;
 
@@ -1770,7 +1774,6 @@
             }
           });
         } else {
-          // holes 데이터가 없는 옛날 포맷 대비
           roundPenCount = ((item.totOb || 0) * 2) + (item.totHaz || 0);
         }
 
@@ -1909,7 +1912,7 @@
         par4Tbody.appendChild(tr);
       });
 
-      // 트렌드 꺾은선 차트 렌더링
+      // 트렌드 차트 렌더링
       drawLineChart('chart-score', labels, [
         { name: '타수', data: scoreData, color: '#2e7d32' },
         { name: '퍼트', data: puttData, color: '#1976d2' }
@@ -1921,7 +1924,7 @@
       ], true);
 
       // ==========================================
-      // [최하단] 1~18홀별 오버파(언더파) & 벌타 박스플롯 산출 및 그리기
+      // [최하단] 1~18홀별 오버파(언더파) & 벌타 박스플롯 (평균값 라인 및 수치 표기)
       // ==========================================
       const scoreBoxStats = holeOverPars.map(arr => calculateBoxPlotStats(arr));
       const penaltyBoxStats = holePenalties.map(arr => calculateBoxPlotStats(arr));
@@ -1929,14 +1932,14 @@
       drawBoxPlotChart('chart-boxplot-score', scoreBoxStats, {
         strokeColor: '#2e7d32',
         boxColor: 'rgba(76, 175, 80, 0.22)',
-        medianColor: '#f57c00'
+        meanColor: '#e65100' // 평균값 주황색 대시 라인 및 수치
       });
 
       drawBoxPlotChart('chart-boxplot-penalty', penaltyBoxStats, {
         min: 0,
         strokeColor: '#d32f2f',
         boxColor: 'rgba(239, 83, 80, 0.22)',
-        medianColor: '#b71c1c'
+        meanColor: '#b71c1c' // 평균값 짙은 붉은색 대시 라인 및 수치
       });
     }
 
