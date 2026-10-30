@@ -566,11 +566,11 @@
       <canvas id="chart-gir-pen" class="chart-canvas"></canvas>
     </div>
 
-    <!-- [최하단 재배치] 8. 각 홀별(1~18H) 오버파 박스플롯 (실수·소수점 1자리 표기) -->
+    <!-- [최하단] 8. 각 홀별(1~18H) 기준타수 대비 오버파/언더파 박스플롯 (실수·소수점 1자리) -->
     <div class="chart-container">
       <div class="chart-header">
         <div>
-          <div class="chart-title">📦 1~18홀별 오버파 분포 (Box Plot)</div>
+          <div class="chart-title">📦 1~18홀별 기준타수 대비 오버파(언더파) 분포 (Box Plot)</div>
           <div style="font-size: 11px; color:#607d8b; margin-top:3px;">
             중앙값(실수값 표기), 상자(25%~75%), 수염(최소~최대) | 1~9H(전반) vs 10~18H(후반) 흐름 비교
           </div>
@@ -583,7 +583,7 @@
       <canvas id="chart-boxplot-score" class="boxplot-canvas"></canvas>
     </div>
 
-    <!-- [최하단 재배치] 9. 각 홀별(1~18H) 벌타수 박스플롯 (실수·소수점 1자리 표기) -->
+    <!-- [최하단] 9. 각 홀별(1~18H) 벌타수 박스플롯 (실수·소수점 1자리) -->
     <div class="chart-container">
       <div class="chart-header">
         <div>
@@ -1383,14 +1383,13 @@
     }
 
     // ==========================================
-    // 5수치 요약값(Quartiles) 실수 정밀 산출 함수
+    // 5수치 요약값(Quartiles) 산출 함수
     // ==========================================
     function calculateBoxPlotStats(arr) {
       if (!arr || arr.length === 0) return null;
       const s = [...arr].sort((a, b) => a - b);
       const n = s.length;
 
-      // 선형 보간을 통한 백분위수 실수 계산
       const getPercentile = (p) => {
         if (n === 1) return s[0];
         const idx = (n - 1) * p;
@@ -1410,7 +1409,7 @@
     }
 
     // ==========================================
-    // 박스플롯 렌더링 (실수 스케일 + 소수점 1자리 수치 라벨 표기)
+    // 박스플롯 렌더링 (소수점 1자리 실수 라벨 & 기준타수 대비 정밀 스케일)
     // ==========================================
     function drawBoxPlotChart(canvasId, boxStatsArray, options = {}) {
       const cvs = document.getElementById(canvasId);
@@ -1427,7 +1426,7 @@
       const H = rect.height;
       const padL = 40;
       const padR = 14;
-      const padT = 32; // 상단 수치 라벨 여유 확보
+      const padT = 34; // 상단 수치 라벨 공간
       const padB = 34;
 
       ctx.clearRect(0, 0, W, H);
@@ -1449,9 +1448,8 @@
         return;
       }
 
-      // 실수 범위 스케일 산출
-      let yMin = options.min !== undefined ? options.min : Math.floor(allMin * 2) / 2;
-      let yMax = options.max !== undefined ? options.max : Math.ceil(allMax * 2) / 2;
+      let yMin = options.min !== undefined ? options.min : Math.floor(allMin);
+      let yMax = options.max !== undefined ? options.max : Math.ceil(allMax);
 
       if (yMin === yMax) {
         yMin -= 1;
@@ -1470,7 +1468,7 @@
 
       const getY = (val) => padT + plotH - ((val - yMin) / (yMax - yMin)) * plotH;
 
-      // 1. 그리드 라인 및 Y축 실수 눈금
+      // 1. 그리드 라인 및 Y축 눈금
       ctx.strokeStyle = '#f0f0f0';
       ctx.lineWidth = 1;
       ctx.fillStyle = '#888888';
@@ -1478,7 +1476,7 @@
       ctx.textAlign = 'right';
 
       const range = yMax - yMin;
-      const step = range > 6 ? 1.0 : 0.5; // 범위에 따른 0.5 또는 1.0 간격
+      const step = range > 6 ? 1.0 : 0.5;
 
       for (let v = yMin; v <= yMax + 0.001; v += step) {
         const roundedV = Math.round(v * 10) / 10;
@@ -1488,7 +1486,6 @@
         ctx.lineTo(W - padR, y);
         ctx.stroke();
 
-        // 0(이븐/노벌타) 기준선 뚜렷하게 강조
         if (Math.abs(roundedV) < 0.01) {
           ctx.save();
           ctx.strokeStyle = '#b0bec5';
@@ -1524,7 +1521,7 @@
       ctx.fillText('◀ 전반 (1~9H)', padL + colW * 4.5, padT - 16);
       ctx.fillText('후반 (10~18H) ▶', halfX + colW * 4.5, padT - 16);
 
-      // 3. 1~18번 홀 박스플롯 및 실수 수치 라벨 표기
+      // 3. 1~18번 홀 박스플롯 및 수치 라벨
       const boxW = Math.max(7, colW * 0.56);
       const strokeColor = options.strokeColor || '#2e7d32';
       const boxColor = options.boxColor || 'rgba(76, 175, 80, 0.22)';
@@ -1534,7 +1531,6 @@
         const centerX = padL + colW * i + colW / 2;
         const holeNum = i + 1;
 
-        // X축 홀 번호
         ctx.font = (holeNum === 9 || holeNum === 18) ? 'bold 11px sans-serif' : '11px sans-serif';
         ctx.fillStyle = holeNum > 9 ? '#1565c0' : '#2e7d32';
         ctx.textAlign = 'center';
@@ -1585,24 +1581,24 @@
         ctx.lineTo(centerX + boxW / 2, yMedPx);
         ctx.stroke();
 
-        // D. [요청 반영] 중앙값(실수) 소수점 첫째 자리 수치 텍스트 표시
+        // D. 중앙값(실수) 소수점 1자리 수치 라벨
         ctx.save();
         ctx.font = 'bold 9.5px sans-serif';
         ctx.fillStyle = medianColor;
         ctx.textAlign = 'center';
 
         const medStr = b.median > 0 ? `+${b.median.toFixed(1)}` : `${b.median.toFixed(1)}`;
-        // 상자 위 또는 중앙값 라인 살짝 위에 배치
         const textY = Math.min(boxTop, yMedPx) - 4;
         ctx.fillText(medStr, centerX, textY);
         ctx.restore();
       });
     }
 
-    // 통계 대시보드 렌더링
+    // 통계 대시보드 렌더링 (저장된 라운딩 기록 완벽 매핑 및 박스플롯 집계)
     function renderStatsDashboard() {
       const history = JSON.parse(localStorage.getItem('golf_rounds') || '[]');
 
+      // 1. 기간 필터링
       let filtered = [...history];
       if (currentPeriod === '1m') {
         const target = new Date();
@@ -1676,7 +1672,7 @@
       let grandThreePlusPutts = 0;
       let grandDoubleOrWorse = 0;
 
-      // 1~18번 홀별 데이터 배열 초기화
+      // 1~18번 홀별 데이터 수집 배열 (홀 인덱스 0 = 1번 홀)
       const holeOverPars = Array.from({ length: 18 }, () => []);
       const holePenalties = Array.from({ length: 18 }, () => []);
 
@@ -1693,6 +1689,7 @@
         long: { label: '장거리 (≥390m)', count: 0, saves: 0, girs: 0, putts: 0, totalScore: 0, penaltyHoles: 0, totalPen: 0 }
       };
 
+      // [핵심 보정]: 각 라운드별로 실제 1~18번 홀의 기준 타수(Par) 대비 오버/언더파 및 벌타를 홀 번호(`h.num`) 기준으로 정확히 집계
       sorted.forEach((item) => {
         labels.push(item.date.slice(5));
         scoreData.push(item.totScore);
@@ -1701,52 +1698,61 @@
         totalPutts += item.totPutts;
 
         let girCount = 0;
-        let penCount = ((item.totOb || 0) * 2) + (item.totHaz || 0);
+        let roundPenCount = 0;
 
         if (item.holes && Array.isArray(item.holes)) {
-          penCount = 0;
-          item.holes.forEach((h, hIdx) => {
+          item.holes.forEach((h, idx) => {
             grandTotalHoles++;
-            const holePens = ((h.ob || 0) * 2) + (h.haz || 0);
-            penCount += holePens;
 
-            if (hIdx >= 0 && hIdx < 18) {
-              const overPar = h.score - h.par;
-              holeOverPars[hIdx].push(overPar);
-              holePenalties[hIdx].push(holePens);
+            // 홀 번호가 명시되어 있으면 h.num, 없으면 배열 순서 사용
+            const holeNumber = (h.num && h.num >= 1 && h.num <= 18) ? h.num : (idx + 1);
+            const holeArrIdx = holeNumber - 1;
+
+            // 기준타수 대비 오버파(언더파) 계산 (Par가 없으면 4 기준)
+            const holePar = h.par || 4;
+            const holeScore = h.score !== undefined ? h.score : holePar;
+            const overPar = holeScore - holePar;
+
+            // 벌타 (OB 2벌타, 해저드 1벌타)
+            const holePens = ((h.ob || 0) * 2) + (h.haz || 0);
+            roundPenCount += holePens;
+
+            if (holeArrIdx >= 0 && holeArrIdx < 18) {
+              holeOverPars[holeArrIdx].push(overPar);
+              holePenalties[holeArrIdx].push(holePens);
             }
 
-            const shots = Math.max(1, h.score - h.putts);
-            const girStd = h.par - 2;
+            const shots = Math.max(1, holeScore - (h.putts !== undefined ? h.putts : 2));
+            const girStd = holePar - 2;
             const isGir = shots <= girStd;
-            const isSave = h.score <= h.par;
+            const isSave = holeScore <= holePar;
 
             if (isGir) {
               girCount++;
               grandGirHoles++;
-              grandGirPutts += h.putts;
+              grandGirPutts += (h.putts !== undefined ? h.putts : 2);
             } else {
               grandNonGirHoles++;
-              grandNonGirOverPar += (h.score - h.par);
+              grandNonGirOverPar += overPar;
               if (isSave) grandScrambleSaves++;
             }
 
             if (h.putts === 1) grandOnePutts++;
             if (h.putts >= 3) grandThreePlusPutts++;
-            if (h.score >= h.par + 2) grandDoubleOrWorse++;
+            if (holeScore >= holePar + 2) grandDoubleOrWorse++;
 
-            let pKey = h.par;
+            let pKey = holePar;
             if (pKey >= 5) pKey = 5;
             if (parStats[pKey]) {
               parStats[pKey].count++;
               if (isSave) parStats[pKey].saves++;
               if (isGir) parStats[pKey].girs++;
-              parStats[pKey].putts += h.putts;
-              parStats[pKey].totalScore += h.score;
-              parStats[pKey].scoreDiff += (h.score - h.par);
+              parStats[pKey].putts += (h.putts !== undefined ? h.putts : 2);
+              parStats[pKey].totalScore += holeScore;
+              parStats[pKey].scoreDiff += overPar;
             }
 
-            if (h.par === 4) {
+            if (holePar === 4) {
               const d = h.dist || 350;
               let dKey = 'mid';
               if (d < 330) dKey = 'short';
@@ -1757,19 +1763,22 @@
               par4DistStats[dKey].count++;
               if (isSave) par4DistStats[dKey].saves++;
               if (isGir) par4DistStats[dKey].girs++;
-              par4DistStats[dKey].putts += h.putts;
-              par4DistStats[dKey].totalScore += h.score;
+              par4DistStats[dKey].putts += (h.putts !== undefined ? h.putts : 2);
+              par4DistStats[dKey].totalScore += holeScore;
               par4DistStats[dKey].totalPen += holePens;
               if (holePens > 0) par4DistStats[dKey].penaltyHoles++;
             }
           });
+        } else {
+          // holes 데이터가 없는 옛날 포맷 대비
+          roundPenCount = ((item.totOb || 0) * 2) + (item.totHaz || 0);
         }
 
         const girRate = Math.round((girCount / 18) * 100);
         girRateData.push(girRate);
-        penData.push(penCount);
+        penData.push(roundPenCount);
         totalGirs += girRate;
-        totalPens += penCount;
+        totalPens += roundPenCount;
       });
 
       const n = sorted.length;
@@ -1781,7 +1790,7 @@
       document.getElementById('avg-gir').textContent = `${Math.round(totalGirs / n)}%`;
       document.getElementById('avg-penalties').textContent = avgPenVal.toFixed(1);
 
-      // 1. 숏게임 & 세이브
+      // 숏게임 & 세이브
       const scrambleRate = grandNonGirHoles > 0 ? ((grandScrambleSaves / grandNonGirHoles) * 100).toFixed(1) : '0.0';
       const wedgeDiff = grandNonGirHoles > 0 ? (grandNonGirOverPar / grandNonGirHoles).toFixed(2) : '0.00';
       const wedgeSign = Number(wedgeDiff) >= 0 ? `+${wedgeDiff}` : `${wedgeDiff}`;
@@ -1790,7 +1799,7 @@
       document.getElementById('stat-scrambling-detail').textContent = `${grandScrambleSaves} / ${grandNonGirHoles} 홀 파 세이브`;
       document.getElementById('stat-wedge-efficiency').textContent = `${wedgeSign}타`;
 
-      // 2. 퍼팅 퀄리티
+      // 퍼팅 퀄리티
       const girPuttsAvg = grandGirHoles > 0 ? (grandGirPutts / grandGirHoles).toFixed(2) : '-';
       const threePuttRate = grandTotalHoles > 0 ? ((grandThreePlusPutts / grandTotalHoles) * 100).toFixed(1) : '0.0';
       const onePuttRate = grandTotalHoles > 0 ? ((grandOnePutts / grandTotalHoles) * 100).toFixed(1) : '0.0';
@@ -1803,7 +1812,7 @@
       document.getElementById('stat-1putt-detail').textContent = `${grandOnePutts} / ${grandTotalHoles} 홀 기록`;
       document.getElementById('stat-3putt-avoid').textContent = `${threePuttAvoid}%`;
 
-      // 3. 롱게임 & 위험 관리
+      // 롱게임 & 위험 관리
       const pureScoreVal = (avgScoreVal - avgPenVal).toFixed(1);
       const bigMissAvoidRate = grandTotalHoles > 0 ? (((grandTotalHoles - grandDoubleOrWorse) / grandTotalHoles) * 100).toFixed(1) : '0.0';
 
@@ -1912,7 +1921,7 @@
       ], true);
 
       // ==========================================
-      // [최하단] 1~18홀별 오버파 & 벌타 박스플롯 렌더링 (실수 보정 및 소수점 1자리 라벨)
+      // [최하단] 1~18홀별 오버파(언더파) & 벌타 박스플롯 산출 및 그리기
       // ==========================================
       const scoreBoxStats = holeOverPars.map(arr => calculateBoxPlotStats(arr));
       const penaltyBoxStats = holePenalties.map(arr => calculateBoxPlotStats(arr));
